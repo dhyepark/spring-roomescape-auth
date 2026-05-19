@@ -1,4 +1,4 @@
-package roomescape.auth;
+package roomescape.auth.interceptor;
 
 import java.util.Arrays;
 
@@ -9,6 +9,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import roomescape.auth.exception.AuthenticationException;
+import roomescape.auth.jwt.JwtProvider;
 
 public class LoginCheckInterceptor implements HandlerInterceptor {
     private final JwtProvider jwtProvider;
@@ -36,4 +37,3 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
         return true;
     }
 }
-
