@@ -31,7 +31,8 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
                 .map(Cookie::getValue)
                 .orElseThrow(AuthenticationException::new);
 
-        jwtProvider.getId(token);
+        Long memberId = jwtProvider.getId(token);
+        request.setAttribute("memberId", memberId);
         return true;
     }
 }
