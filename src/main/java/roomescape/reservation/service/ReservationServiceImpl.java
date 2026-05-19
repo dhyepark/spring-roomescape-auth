@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import roomescape.auth.exception.ForbiddenException;
 import roomescape.member.domain.Member;
 import roomescape.member.exception.MemberNotFoundException;
 import roomescape.member.repository.MemberRepository;
@@ -72,18 +73,24 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public void cancelForUser(Long id) {
+    public void cancelForUser(Long id, Long memberId) {
         Reservation reservation = reservationRepository.findById(id)
                 .orElseThrow(() -> new ReservationNotFoundException(id));
+        if (!reservation.getMemberId().equals(memberId)) {
+            throw new ForbiddenException();
+        }
         reservation.getTime().validateNotPastForCancel();
         reservationRepository.deleteById(id);
     }
 
     @Transactional
     @Override
-    public Reservation update(Long id, Long timeId) {
+    public Reservation update(Long id, Long timeId, Long memberId) {
         Reservation reservation = reservationRepository.findById(id)
                 .orElseThrow(() -> new ReservationNotFoundException(id));
+        if (!reservation.getMemberId().equals(memberId)) {
+            throw new ForbiddenException();
+        }
         reservation.getTime().validateUpdatableReservation();
         ReservationTime newTime = findTime(timeId);
         newTime.validateReservableSchedule();

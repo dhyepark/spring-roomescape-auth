@@ -50,16 +50,18 @@ public class ReservationController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> cancel(@PathVariable Long id) {
-        reservationService.cancelForUser(id);
+    public ResponseEntity<Void> cancel(@PathVariable Long id, @LoginMember Member loginMember) {
+        reservationService.cancelForUser(id, loginMember.getId());
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ReservationResponseDto> update(
-            @PathVariable Long id, @RequestBody @Valid UserReservationUpdateRequestDto request) {
+            @PathVariable Long id,
+            @RequestBody @Valid UserReservationUpdateRequestDto request,
+            @LoginMember Member loginMember) {
         ReservationResponseDto body = ReservationResponseDto.from(
-                reservationService.update(id, request.timeId()));
+                reservationService.update(id, request.timeId(), loginMember.getId()));
         return ResponseEntity.ok(body);
     }
 }
