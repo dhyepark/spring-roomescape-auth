@@ -160,6 +160,7 @@ Set-Cookie: token=<JWT>; Path=/; HttpOnly
 | 400 | `PAST_RESERVATION_UPDATE` | 이미 지난 예약 변경 불가 |
 | 400 | `PAST_RESERVATION_CANCEL` | 이미 지난 예약 취소 불가 |
 | 401 | `UNAUTHORIZED` | 인증 실패 또는 토큰 없음 |
+| 403 | `FORBIDDEN` | 접근 권한 없음 (다른 사용자의 예약 수정/취소 시도) |
 | 404 | `MEMBER_NOT_FOUND` | 회원을 찾을 수 없음 |
 | 404 | `RESERVATION_NOT_FOUND` | 예약을 찾을 수 없음 |
 | 404 | `TIME_NOT_FOUND` | 예약 시간을 찾을 수 없음 |
