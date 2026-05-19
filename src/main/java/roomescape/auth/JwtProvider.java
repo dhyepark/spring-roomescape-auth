@@ -12,6 +12,8 @@ import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import roomescape.auth.exception.AuthenticationException;
+
 @Component
 public class JwtProvider {
     private final SecretKey secretKey;
@@ -37,12 +39,10 @@ public class JwtProvider {
                     .parseSignedClaims(jwt)
                     .getPayload();
             return claims.get("id", Long.class);
-        } catch (SecurityException | MalformedJwtException e) {
-            throw new IllegalArgumentException("유효하지 않은 JWT 서명입니다.", e);
-        } catch (ExpiredJwtException e) {
-            throw new IllegalArgumentException("만료된 JWT 토큰입니다.", e);
+        } catch (SecurityException | MalformedJwtException | ExpiredJwtException e) {
+            throw new AuthenticationException();
         } catch (Exception e) {
-            throw new IllegalArgumentException("유효하지 않은 JWT 토큰입니다.", e);
+            throw new AuthenticationException();
         }
     }
 }
