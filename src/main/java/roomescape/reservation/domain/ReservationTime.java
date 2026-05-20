@@ -15,13 +15,23 @@ public class ReservationTime {
     }
 
     public ReservationTime(Long id, LocalDateTime startAt, LocalDateTime endAt) {
+        validateTimesPresent(startAt, endAt);
+        validateTimeOrder(startAt, endAt);
         this.id = id;
         this.startAt = startAt;
         this.endAt = endAt;
     }
 
-    public ReservationTime withId(Long id) {
-        return new ReservationTime(id, startAt, endAt);
+    private void validateTimesPresent(LocalDateTime startAt, LocalDateTime endAt) {
+        if (startAt == null || endAt == null) {
+            throw new IllegalArgumentException("시작 시간과 종료 시간은 비어있을 수 없습니다.");
+        }
+    }
+
+    private void validateTimeOrder(LocalDateTime startAt, LocalDateTime endAt) {
+        if (!endAt.isAfter(startAt)) {
+            throw new IllegalArgumentException("종료 시간은 시작 시간 이후여야 합니다.");
+        }
     }
 
     public Long getId() {
