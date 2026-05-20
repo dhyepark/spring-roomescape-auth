@@ -95,7 +95,10 @@ public class ReservationServiceImpl implements ReservationService {
         ReservationTime newTime = findTime(timeId);
         newTime.validateReservableSchedule();
         validateDuplicatedReservation(reservation.getThemeId(), newTime);
-        reservationRepository.update(id, timeId);
+        boolean updated = reservationRepository.update(id, timeId);
+        if (!updated) {
+            throw new IllegalStateException("예약 수정에 실패했습니다. id: " + id);
+        }
         return reservation.withTime(newTime);
     }
 
