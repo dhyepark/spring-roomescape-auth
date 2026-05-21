@@ -5,20 +5,22 @@ public class Theme {
     private final String name;
     private final String description;
     private final String imageUrl;
+    private final Long storeId;
 
-    public Theme(String name, String description, String imageUrl) {
-        this(null, name, description, imageUrl);
+    public Theme(String name, String description, String imageUrl, Long storeId) {
+        this(null, name, description, imageUrl, storeId);
     }
 
-    private Theme(Long id, String name, String description, String imageUrl) {
+    private Theme(Long id, String name, String description, String imageUrl, Long storeId) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.imageUrl = imageUrl;
+        this.storeId = storeId;
     }
 
     public Theme withId(Long id) {
-        return new Theme(id, this.name, this.description, this.imageUrl);
+        return new Theme(id, this.name, this.description, this.imageUrl, this.storeId);
     }
 
     public Long getId() {
@@ -35,5 +37,9 @@ public class Theme {
 
     public String getImageUrl() {
         return imageUrl;
+    }
+
+    public Long getStoreId() {
+        return storeId;
     }
 }

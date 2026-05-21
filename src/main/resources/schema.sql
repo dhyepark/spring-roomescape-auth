@@ -37,7 +37,9 @@ CREATE TABLE theme
     name        VARCHAR(255) NOT NULL,
     description VARCHAR(255) NOT NULL,
     image_url   VARCHAR(255) NOT NULL,
-    PRIMARY KEY (id)
+    store_id    BIGINT       NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (store_id) REFERENCES store (id)
 );
 
 CREATE TABLE reservation

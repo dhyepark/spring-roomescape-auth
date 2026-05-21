@@ -30,7 +30,7 @@ public class JdbcThemeRepository implements ThemeRepository {
     @Override
     public List<Theme> findAll() {
         return jdbcTemplate.query(
-                "SELECT t.id, t.name, t.description, t.image_url FROM theme t",
+                "SELECT t.id, t.name, t.description, t.image_url, t.store_id FROM theme t",
                 new ThemeRowMapper()
         );
     }
@@ -38,7 +38,7 @@ public class JdbcThemeRepository implements ThemeRepository {
     @Override
     public Theme findById(Long id) {
         List<Theme> themes = jdbcTemplate.query(
-                "SELECT t.id, t.name, t.description, t.image_url FROM theme t WHERE t.id = ?",
+                "SELECT t.id, t.name, t.description, t.image_url, t.store_id FROM theme t WHERE t.id = ?",
                 new ThemeRowMapper(),
                 id
         );
@@ -53,7 +53,8 @@ public class JdbcThemeRepository implements ThemeRepository {
         Number id = themeInsert.executeAndReturnKey(new MapSqlParameterSource()
                 .addValue("name", theme.getName())
                 .addValue("description", theme.getDescription())
-                .addValue("image_url", theme.getImageUrl()));
+                .addValue("image_url", theme.getImageUrl())
+                .addValue("store_id", theme.getStoreId()));
         return theme.withId(id.longValue());
     }
 
@@ -77,7 +78,7 @@ public class JdbcThemeRepository implements ThemeRepository {
     public List<Theme> findBestThemesByDate(LocalDate startDate, LocalDate endDate, int limit) {
         return jdbcTemplate.query(
                 """
-                SELECT t.id, t.name, t.description, t.image_url
+                SELECT t.id, t.name, t.description, t.image_url, t.store_id
                 FROM theme t
                 JOIN reservation r ON r.theme_id = t.id
                 JOIN reservation_time rt ON r.time_id = rt.id
@@ -99,7 +100,8 @@ public class JdbcThemeRepository implements ThemeRepository {
             return new Theme(
                     rs.getString("name"),
                     rs.getString("description"),
-                    rs.getString("image_url")
+                    rs.getString("image_url"),
+                    rs.getLong("store_id")
             ).withId(rs.getLong("id"));
         }
     }

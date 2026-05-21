@@ -121,10 +121,11 @@ public class RoomescapePageController {
             @RequestParam String name,
             @RequestParam String description,
             @RequestParam String imageUrl,
+            @RequestParam(required = false) Long storeId,
             RedirectAttributes redirectAttributes
     ) {
         try {
-            themeService.create(new ThemeSaveServiceDto(name, description, imageUrl));
+            themeService.create(new ThemeSaveServiceDto(name, description, imageUrl, storeId));
             addSuccessMessage(redirectAttributes, "테마를 생성했습니다.");
         } catch (IllegalArgumentException e) {
             addExpectedErrorMessage(redirectAttributes, "테마 생성에 실패했습니다. 입력값을 다시 확인해 주세요.", e);
