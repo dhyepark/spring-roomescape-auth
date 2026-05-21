@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import roomescape.member.domain.Member;
+import roomescape.member.domain.Role;
 
 @Repository
 public class JdbcMemberRepository implements MemberRepository {
@@ -28,7 +29,7 @@ public class JdbcMemberRepository implements MemberRepository {
     @Override
     public Optional<Member> findById(Long id) {
         List<Member> results = jdbcTemplate.query(
-                "SELECT id, email, password, name FROM member WHERE id = ?",
+                "SELECT id, email, password, name, role FROM member WHERE id = ?",
                 new MemberRowMapper(),
                 id
         );
@@ -38,7 +39,7 @@ public class JdbcMemberRepository implements MemberRepository {
     @Override
     public Optional<Member> findByEmail(String email) {
         List<Member> results = jdbcTemplate.query(
-                "SELECT id, email, password, name FROM member WHERE email = ?",
+                "SELECT id, email, password, name, role FROM member WHERE email = ?",
                 new MemberRowMapper(),
                 email
         );
@@ -60,7 +61,8 @@ public class JdbcMemberRepository implements MemberRepository {
             return new Member(
                     rs.getString("email"),
                     rs.getString("password"),
-                    rs.getString("name")
+                    rs.getString("name"),
+                    Role.valueOf(rs.getString("role"))
             ).withId(rs.getLong("id"));
         }
     }
