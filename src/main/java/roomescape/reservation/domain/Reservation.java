@@ -63,4 +63,8 @@ public class Reservation {
     public Theme getTheme() {
         return theme;
     }
+
+    public boolean belongsToStore(Long storeId) {
+        return theme.getStoreId().equals(storeId);
+    }
 }
