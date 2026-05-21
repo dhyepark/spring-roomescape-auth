@@ -15,11 +15,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import roomescape.reservation.controller.dto.ReservationResponseDto;
 import roomescape.reservation.exception.DuplicateReservationException;
 import roomescape.reservation.exception.PastReservationException;
-import roomescape.reservation.exception.ReservationNotFoundException;
-import roomescape.reservation.service.ReservationService;
+import roomescape.reservation.service.AdminReservationService;
 import roomescape.reservation.service.dto.ReservationSaveServiceDto;
 import roomescape.theme.controller.dto.ThemeResponseDto;
 import roomescape.theme.exception.ThemeNotFoundException;
@@ -35,16 +33,16 @@ public class RoomescapePageController {
 
     private static final Logger log = LoggerFactory.getLogger(RoomescapePageController.class);
 
-    private final ReservationService reservationService;
+    private final AdminReservationService adminReservationService;
     private final ThemeService themeService;
     private final TimeService timeService;
 
     public RoomescapePageController(
-            ReservationService reservationService,
+            AdminReservationService adminReservationService,
             ThemeService themeService,
             TimeService timeService
     ) {
-        this.reservationService = reservationService;
+        this.adminReservationService = adminReservationService;
         this.themeService = themeService;
         this.timeService = timeService;
     }
@@ -52,14 +50,6 @@ public class RoomescapePageController {
     @GetMapping({"/", "/dashboard"})
     public String dashboard() {
         return "dashboard/index";
-    }
-
-    @GetMapping("/dashboard/reservations")
-    public String reservationsPage(Model model) {
-        model.addAttribute("reservations", reservationService.getAll().stream().map(ReservationResponseDto::from).toList());
-        model.addAttribute("themes", themeService.getAll().stream().map(ThemeResponseDto::from).toList());
-        model.addAttribute("times", timeService.findAll().stream().map(TimeResponseDto::from).toList());
-        return "dashboard/reservations";
     }
 
     @GetMapping("/dashboard/availability")
@@ -96,22 +86,11 @@ public class RoomescapePageController {
             RedirectAttributes redirectAttributes
     ) {
         try {
-            reservationService.create(new ReservationSaveServiceDto(memberId, themeId, timeId));
+            adminReservationService.create(new ReservationSaveServiceDto(memberId, themeId, timeId));
             addSuccessMessage(redirectAttributes, "예약을 생성했습니다.");
         } catch (PastReservationException | DuplicateReservationException |
                  IllegalArgumentException | ThemeNotFoundException | TimeNotFoundException e) {
             addExpectedErrorMessage(redirectAttributes, "예약 생성에 실패했습니다. 입력값을 다시 확인해 주세요.", e);
-        }
-        return "redirect:/dashboard/reservations";
-    }
-
-    @PostMapping("/dashboard/reservations/{id}/cancel")
-    public String cancelReservation(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        try {
-            reservationService.cancel(id);
-            addSuccessMessage(redirectAttributes, "예약을 취소했습니다.");
-        } catch (ReservationNotFoundException e) {
-            addExpectedErrorMessage(redirectAttributes, "취소할 예약을 찾지 못했습니다.", e);
         }
         return "redirect:/dashboard/reservations";
     }
