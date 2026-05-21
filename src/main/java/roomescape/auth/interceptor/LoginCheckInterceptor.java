@@ -21,8 +21,8 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) {
         String token = extractToken(request);
-        Long memberId = jwtProvider.getId(token);
-        request.setAttribute("memberId", memberId);
+        request.setAttribute("memberId", jwtProvider.getId(token));
+        request.setAttribute("role", jwtProvider.getRole(token));
         return true;
     }
 
