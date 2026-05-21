@@ -69,7 +69,22 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public List<Reservation> getByMemberId(Long memberId) {
-        return reservationRepository.findByMemberId(memberId);
+        return reservationRepository.findAllByMemberId(memberId);
+    }
+
+    @Override
+    public List<Reservation> getByStoreId(Long storeId) {
+        return reservationRepository.findAllByStoreId(storeId);
+    }
+
+    @Override
+    public void cancelForManager(Long id, Long storeId) {
+        Reservation reservation = reservationRepository.findById(id)
+                .orElseThrow(() -> new ReservationNotFoundException(id));
+        if (!reservation.belongsToStore(storeId)) {
+            throw new ForbiddenException();
+        }
+        reservationRepository.deleteById(id);
     }
 
     @Override

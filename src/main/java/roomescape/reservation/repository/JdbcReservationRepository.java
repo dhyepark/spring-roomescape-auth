@@ -41,7 +41,8 @@ public class JdbcReservationRepository implements ReservationRepository {
                    m.email AS member_email,
                    t.name  AS theme_name,
                    t.description AS theme_description,
-                   t.image_url   AS theme_image_url
+                   t.image_url   AS theme_image_url,
+                   t.store_id    AS theme_store_id
             FROM reservation r
             LEFT JOIN member m ON r.member_id = m.id
             LEFT JOIN reservation_time rt ON r.time_id = rt.id
@@ -64,11 +65,20 @@ public class JdbcReservationRepository implements ReservationRepository {
     }
 
     @Override
-    public List<Reservation> findByMemberId(Long memberId) {
+    public List<Reservation> findAllByMemberId(Long memberId) {
         return jdbcTemplate.query(
                 BASE_SELECT + "WHERE r.member_id = ?",
                 new ReservationRowMapper(),
                 memberId
+        );
+    }
+
+    @Override
+    public List<Reservation> findAllByStoreId(Long storeId) {
+        return jdbcTemplate.query(
+                BASE_SELECT + "WHERE t.store_id = ?",
+                new ReservationRowMapper(),
+                storeId
         );
     }
 
@@ -151,7 +161,8 @@ public class JdbcReservationRepository implements ReservationRepository {
                 theme = new Theme(
                         themeName,
                         rs.getString("theme_description"),
-                        rs.getString("theme_image_url")
+                        rs.getString("theme_image_url"),
+                        rs.getLong("theme_store_id")
                 ).withId(rs.getLong("theme_id"));
             }
 
