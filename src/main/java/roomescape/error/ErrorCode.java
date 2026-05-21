@@ -10,6 +10,7 @@ public enum ErrorCode {
     PAST_RESERVATION_CANCEL("이미 지난 예약은 취소할 수 없습니다."),
     THEME_NOT_FOUND("테마를 찾을 수 없습니다."),
     MEMBER_NOT_FOUND("회원을 찾을 수 없습니다."),
+    STORE_NOT_FOUND("매장을 찾을 수 없습니다."),
     UNAUTHORIZED("인증이 필요합니다."),
     FORBIDDEN("접근 권한이 없습니다."),
     INVALID_FORMAT("요청 형식이 올바르지 않습니다."),
