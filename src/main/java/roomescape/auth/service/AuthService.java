@@ -27,6 +27,6 @@ public class AuthService {
         if (!encryptor.matches(request.password(), member.getPassword())) {
             throw new AuthenticationException();
         }
-        return jwtProvider.generate(member.getId());
+        return jwtProvider.generate(member.getId(), member.getRole());
     }
 }

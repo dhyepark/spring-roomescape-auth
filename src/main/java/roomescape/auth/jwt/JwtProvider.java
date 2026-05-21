@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import roomescape.auth.exception.AuthenticationException;
+import roomescape.member.domain.Role;
 
 @Component
 public class JwtProvider {
@@ -22,23 +23,32 @@ public class JwtProvider {
         this.secretKey = Keys.hmacShaKeyFor(secretKey.getBytes());
     }
 
-    public String generate(Long id) {
+    public String generate(Long id, Role role) {
         Date expiredDate = Date.from(Instant.now().plus(1, ChronoUnit.HOURS));
         return Jwts.builder()
                 .claim("id", id)
+                .claim("role", role.name())
                 .expiration(expiredDate)
                 .signWith(secretKey)
                 .compact();
     }
 
     public Long getId(String jwt) {
+        return parseClaims(jwt).get("id", Long.class);
+    }
+
+    public Role getRole(String jwt) {
+        String role = parseClaims(jwt).get("role", String.class);
+        return Role.valueOf(role);
+    }
+
+    private Claims parseClaims(String jwt) {
         try {
-            Claims claims = Jwts.parser()
+            return Jwts.parser()
                     .verifyWith(secretKey)
                     .build()
                     .parseSignedClaims(jwt)
                     .getPayload();
-            return claims.get("id", Long.class);
         } catch (SecurityException | MalformedJwtException | ExpiredJwtException e) {
             throw new AuthenticationException();
         } catch (Exception e) {
