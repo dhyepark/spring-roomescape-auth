@@ -39,8 +39,8 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public List<Reservation> getAll() {
-        return reservationRepository.findAll();
+    public List<Reservation> getByMemberId(Long memberId) {
+        return reservationRepository.findAllByMemberId(memberId);
     }
 
     @Transactional
@@ -60,35 +60,7 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public void cancel(Long id) {
-        boolean deleted = reservationRepository.deleteById(id);
-        if (!deleted) {
-            throw new ReservationNotFoundException(id);
-        }
-    }
-
-    @Override
-    public List<Reservation> getByMemberId(Long memberId) {
-        return reservationRepository.findAllByMemberId(memberId);
-    }
-
-    @Override
-    public List<Reservation> getByStoreId(Long storeId) {
-        return reservationRepository.findAllByStoreId(storeId);
-    }
-
-    @Override
-    public void cancelForManager(Long id, Long storeId) {
-        Reservation reservation = reservationRepository.findById(id)
-                .orElseThrow(() -> new ReservationNotFoundException(id));
-        if (!reservation.belongsToStore(storeId)) {
-            throw new ForbiddenException();
-        }
-        reservationRepository.deleteById(id);
-    }
-
-    @Override
-    public void cancelForUser(Long id, Long memberId) {
+    public void cancel(Long id, Long memberId) {
         Reservation reservation = reservationRepository.findById(id)
                 .orElseThrow(() -> new ReservationNotFoundException(id));
         if (!reservation.getMemberId().equals(memberId)) {
@@ -130,7 +102,7 @@ public class ReservationServiceImpl implements ReservationService {
         if (memberId == null) {
             throw new IllegalArgumentException("회원은 필수입니다.");
         }
-        if (!memberRepository.findById(memberId).isPresent()) {
+        if (memberRepository.findById(memberId).isEmpty()) {
             throw new MemberNotFoundException(memberId);
         }
     }

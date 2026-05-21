@@ -25,7 +25,6 @@ import roomescape.reservation.service.ReservationService;
 @RestController
 @RequestMapping("/reservations")
 public class ReservationController {
-
     private final ReservationService reservationService;
 
     public ReservationController(ReservationService reservationService) {
@@ -51,7 +50,7 @@ public class ReservationController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> cancel(@PathVariable Long id, @LoginMember Member loginMember) {
-        reservationService.cancelForUser(id, loginMember.getId());
+        reservationService.cancel(id, loginMember.getId());
         return ResponseEntity.noContent().build();
     }
 
