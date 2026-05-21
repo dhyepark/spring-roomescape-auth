@@ -14,22 +14,31 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import roomescape.auth.resolver.LoginMember;
+import roomescape.member.domain.Member;
 import roomescape.reservation.controller.dto.ReservationResponseDto;
 import roomescape.reservation.controller.dto.ReservationSaveRequestDto;
 import roomescape.reservation.service.ReservationService;
+import roomescape.store.domain.Store;
+import roomescape.store.exception.StoreNotFoundException;
+import roomescape.store.repository.StoreRepository;
 
 @RestController
 @RequestMapping("/admin/reservations")
 public class AdminReservationController {
     private final ReservationService reservationService;
+    private final StoreRepository storeRepository;
 
-    public AdminReservationController(ReservationService reservationService) {
+    public AdminReservationController(ReservationService reservationService, StoreRepository storeRepository) {
         this.reservationService = reservationService;
+        this.storeRepository = storeRepository;
     }
 
     @GetMapping
-    public ResponseEntity<List<ReservationResponseDto>> getAll() {
-        List<ReservationResponseDto> body = reservationService.getAll().stream()
+    public ResponseEntity<List<ReservationResponseDto>> getAll(@LoginMember Member loginMember) {
+        Store store = storeRepository.findByManagerId(loginMember.getId())
+                .orElseThrow(() -> new StoreNotFoundException(loginMember.getId()));
+        List<ReservationResponseDto> body = reservationService.getByStoreId(store.getId()).stream()
                 .map(ReservationResponseDto::from)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(body);
@@ -44,8 +53,10 @@ public class AdminReservationController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> cancel(@PathVariable Long id) {
-        reservationService.cancel(id);
+    public ResponseEntity<Void> cancel(@PathVariable Long id, @LoginMember Member loginMember) {
+        Store store = storeRepository.findByManagerId(loginMember.getId())
+                .orElseThrow(() -> new StoreNotFoundException(loginMember.getId()));
+        reservationService.cancelForManager(id, store.getId());
         return ResponseEntity.noContent().build();
     }
 }
