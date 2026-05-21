@@ -1,4 +1,5 @@
 DROP TABLE IF EXISTS reservation;
+DROP TABLE IF EXISTS store;
 DROP TABLE IF EXISTS reservation_time;
 DROP TABLE IF EXISTS theme;
 DROP TABLE IF EXISTS member;
@@ -9,7 +10,17 @@ CREATE TABLE member
     email    VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     name     VARCHAR(255) NOT NULL,
+    role     VARCHAR(50)  NOT NULL DEFAULT 'USER',
     PRIMARY KEY (id)
+);
+
+CREATE TABLE store
+(
+    id         BIGINT       NOT NULL AUTO_INCREMENT,
+    name       VARCHAR(255) NOT NULL,
+    manager_id BIGINT       NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (manager_id) REFERENCES member (id)
 );
 
 CREATE TABLE reservation_time

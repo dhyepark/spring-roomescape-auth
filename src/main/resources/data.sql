@@ -1,7 +1,11 @@
-INSERT INTO member (email, password, name)
+INSERT INTO member (email, password, name, role)
 VALUES
-    ('tester1@test.com', 'password1', 'tester1'),
-    ('tester2@test.com', 'password2', 'tester2');
+    ('tester1@test.com', 'password1', 'tester1', 'USER'),
+    ('tester2@test.com', 'password2', 'tester2', 'MANAGER');
+
+INSERT INTO store (name, manager_id)
+VALUES
+    ('강남점', 2);
 
 INSERT INTO reservation_time (start_time, end_time)
 VALUES
